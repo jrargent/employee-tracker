@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+require('console.table');
 
 // Connect to database
 const db = mysql.createConnection(
@@ -12,7 +13,7 @@ const db = mysql.createConnection(
       database: 'employees'
     },
     console.log(`Connected to the inventory_db database.`)
-  );
+  ).promise();
 
   const mainMenu = async () => { // async await allows for asynchronous promises
     const { choice } = await inquirer.prompt([
@@ -44,7 +45,7 @@ const db = mysql.createConnection(
 
     switch (choice) {
         case 'VIEW_EMPLOYEES':
-            viewEmployees();
+            viewEmployees()//.then(mainMenu());
             break;
         case 'VIEW_DEPARTMENTS':
             viewDepartments();
@@ -63,7 +64,9 @@ const db = mysql.createConnection(
   };
 
 const viewEmployees = async () => {
-    const employeeData = await db.query
+    const [employeeData] = await db.query('SELECT * FROM employee');
+    console.table(employeeData);
+    mainMenu();
 
 };
 
