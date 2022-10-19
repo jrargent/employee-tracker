@@ -47,6 +47,10 @@ const mainMenu = async () => { // async await allows for asynchronous promises
                     value: 'ADD_ROLE'
                 },
                 {
+                    name: 'Update Employee Role',
+                    value: 'UPDATE_ROLE'
+                },
+                {
                     name: 'Exit',
                     value: 'EXIT'
                 }
@@ -73,6 +77,9 @@ const mainMenu = async () => { // async await allows for asynchronous promises
             break;
         // case 'ADD_ROLE':
         //     addRole();
+        //     break;
+        // case 'UPDATE_ROLE':
+        //     updateRole();
         //     break;
         case 'EXIT':
             process.exit();
@@ -111,8 +118,28 @@ const viewRoles = async () => {
 };
 
 const addDepartment = () => {
+    // prompt here for 'What is the name of the department?'
     const newDepartment = `INSERT INTO department (name)
                             VALUES (?)`;
-}
+};
+
+const addRole = () => {
+    // prompt here for 'What is the name of the role?' 
+    // and 'What is the salary of the role?'
+    // and 'Which department does this role belong to?' (use choice prompt here)
+};
+
+const addEmployee = () => {
+    // prompt here for 'What is the employee's first name?'
+    // 'What is the employee's last name?' 
+    // and 'What is the employee's role?' (use choice prompt here)
+    // 'Who is the employee's manager? (use choice prompt here and list none, other employees)
+};
+
+const updateRole = () => {
+    // prompt here for 'Which employee's role do you want to update?? (use choice prompt here and list employees)
+    // 'Which role do you want to assign the selected employee?' 
+
+};
 
 mainMenu();
