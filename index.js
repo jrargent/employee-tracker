@@ -85,7 +85,12 @@ const mainMenu = async () => { // async await allows for asynchronous promises
 };
 
 const viewEmployees = async () => {
-    const [employeeData] = await db.query('SELECT * FROM employee');
+    const [employeeData] = await db.query(
+        `SELECT employee.id, employee.first_name, employee.last_name, role.title AS title, 
+         department.name AS department, role.salary, employee.manager_id AS manager 
+         FROM employee 
+         JOIN role ON employee.role_id = role.id 
+         JOIN department ON role.department_id = department.id`);
     console.table(employeeData);
     mainMenu();
 
