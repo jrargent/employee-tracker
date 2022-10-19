@@ -136,9 +136,9 @@ const addDepartment = () => {
             message: 'What is the name of the department?'
         }
     ]).then(data => {
-        const newDepartment = db.query(`INSERT INTO department (name)
+        db.query(`INSERT INTO department (name)
         VALUES ('${data.name}')`);
-        viewDepartments(newDepartment);
+        viewDepartments();
     })
 
 
