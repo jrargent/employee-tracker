@@ -129,8 +129,19 @@ const viewRoles = async () => {
 
 const addDepartment = () => {
     // prompt here for 'What is the name of the department?'
-    const newDepartment = `INSERT INTO department (name)
-                            VALUES (?)`;
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'name',
+            message: 'What is the name of the department?'
+        }
+    ]).then(data => {
+        const newDepartment = db.query(`INSERT INTO department (name)
+        VALUES ('${data.name}')`);
+        viewDepartments(newDepartment);
+    })
+
+
 };
 
 const addRole = () => {
