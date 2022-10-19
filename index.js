@@ -70,7 +70,7 @@ const mainMenu = async () => { // async await allows for asynchronous promises
 
     switch (choice) {
         case 'VIEW_EMPLOYEES':
-            viewEmployees()//.then(mainMenu());
+            viewEmployees()
             break;
         case 'VIEW_DEPARTMENTS':
             viewDepartments();
@@ -84,9 +84,9 @@ const mainMenu = async () => { // async await allows for asynchronous promises
         case 'ADD_DEPARTMENT':
             addDepartment();
             break;
-        // case 'ADD_ROLE':
-        //     addRole();
-        //     break;
+        case 'ADD_ROLE':
+            addRole();
+            break;
         // case 'UPDATE_ROLE':
         //     updateRole();
         //     break;
@@ -128,7 +128,7 @@ const viewRoles = async () => {
 };
 
 const addDepartment = () => {
-    // prompt here for 'What is the name of the department?'
+
     inquirer.prompt([
         {
             type: 'input',
@@ -139,15 +139,57 @@ const addDepartment = () => {
         db.query(`INSERT INTO department (name)
         VALUES ('${data.name}')`);
         viewDepartments();
-    })
+    });
 
 
 };
 
-const addRole = () => {
-    // prompt here for 'What is the name of the role?' 
-    // and 'What is the salary of the role?'
-    // and 'Which department does this role belong to?' (use choice prompt here)
+const addRole = async () => {
+    const [listDepartments] = await db.query('SELECT * FROM department');
+    //console.log(listDepartments);
+    let departments = [];
+    let getDepartment = new Promise((resolve, reject) => {
+        for (let dept of listDepartments) {
+            var departmentData = {
+                name: dept.name,
+                value: {
+                    name: dept.name,
+                    id: dept.id
+                }
+            }
+            departments.push(departmentData);
+            resolve(departments);
+        }
+    });
+
+    getDepartment.then((departments) => {
+        console.log(departments);
+    })
+
+
+    // inquirer.prompt([
+    //     {
+    //         type: 'input',
+    //         name: 'name',
+    //         message: 'What is the name of the role?'
+    //     },
+    //     {
+    //         type: 'number',
+    //         name: 'salary',
+    //         message: 'What is the salary of the role?'
+    //     },
+    //     {
+    //         type: 'list',
+    //         name: 'choice',
+    //         message: 'Which department does this role belong to?',
+    //         choices: 
+
+
+    // ]).then(
+    // // INSERT INTO role (title, salary, department_id)
+    // // VALUES ('${data.title}', ${data.salary}, ${data.id}),
+    // )
+
 };
 
 const addEmployee = () => {
