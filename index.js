@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const logo = require('asciiart-logo');
 require('console.table');
 
 // Connect to database
@@ -14,6 +15,14 @@ const db = mysql.createConnection(
     },
     console.log(`Connected to the inventory_db database.`)
 ).promise();
+
+
+function logoLoad() {
+    const logoText = logo({ name: 'Employee Tracker' }).render();
+    console.log(logoText);
+
+    mainMenu();
+};
 
 const mainMenu = async () => { // async await allows for asynchronous promises
     const { choice } = await inquirer.prompt([
@@ -93,11 +102,12 @@ const mainMenu = async () => { // async await allows for asynchronous promises
 
 const viewEmployees = async () => {
     const [employeeData] = await db.query(
-        `SELECT employee.id, employee.first_name, employee.last_name, role.title AS title, 
-         department.name AS department, role.salary, employee.manager_id AS manager 
-         FROM employee 
-         JOIN role ON employee.role_id = role.id 
-         JOIN department ON role.department_id = department.id`);
+        `SELECT E.id, E.first_name, E.last_name, role.title AS title, 
+         department.name AS department, role.salary, CONCAT(m.first_name,' ', M.last_name) AS manager
+         FROM employee E 
+         JOIN role ON E.role_id = role.id 
+         JOIN department ON role.department_id = department.id
+         LEFT JOIN employee M ON E.manager_id = M.id`);
     console.table(employeeData);
     mainMenu();
 
@@ -142,4 +152,4 @@ const updateRole = () => {
 
 };
 
-mainMenu();
+logoLoad();
