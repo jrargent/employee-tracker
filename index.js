@@ -5,17 +5,17 @@ require('console.table');
 // Connect to database
 const db = mysql.createConnection(
     {
-      host: 'localhost',
-      // MySQL username,
-      user: 'root',
-      // MySQL password
-      password: 'Knittaplease4!',
-      database: 'employees'
+        host: 'localhost',
+        // MySQL username,
+        user: 'root',
+        // MySQL password
+        password: 'string',
+        database: 'employees'
     },
     console.log(`Connected to the inventory_db database.`)
-  ).promise();
+).promise();
 
-  const mainMenu = async () => { // async await allows for asynchronous promises
+const mainMenu = async () => { // async await allows for asynchronous promises
     const { choice } = await inquirer.prompt([
         {
             type: 'list',
@@ -57,11 +57,11 @@ const db = mysql.createConnection(
             process.exit();
             break;
         default:
-            process.exit();        
+            process.exit();
     }
 
 
-  };
+};
 
 const viewEmployees = async () => {
     const [employeeData] = await db.query('SELECT * FROM employee');
@@ -71,7 +71,7 @@ const viewEmployees = async () => {
 };
 
 const viewDepartments = () => {
-// queries go here
+    // queries go here
 
 };
 
@@ -82,4 +82,4 @@ const viewRoles = () => {
 
 
 
-  mainMenu();
+mainMenu();
