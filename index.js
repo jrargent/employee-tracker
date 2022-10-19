@@ -35,6 +35,18 @@ const mainMenu = async () => { // async await allows for asynchronous promises
                     value: 'VIEW_ROLES'
                 },
                 {
+                    name: 'Add an Employee',
+                    value: 'ADD_EMPLOYEE'
+                },
+                {
+                    name: 'Add a Department',
+                    value: 'ADD_DEPARTMENT'
+                },
+                {
+                    name: 'Add a Role',
+                    value: 'ADD_ROLE'
+                },
+                {
                     name: 'Exit',
                     value: 'EXIT'
                 }
@@ -53,6 +65,15 @@ const mainMenu = async () => { // async await allows for asynchronous promises
         case 'VIEW_ROLES':
             viewRoles();
             break;
+        // case 'ADD_EMPLOYEE':
+        //     addEmployee();
+        //     break;
+        case 'ADD_DEPARTMENT':
+            addDepartment();
+            break;
+        // case 'ADD_ROLE':
+        //     addRole();
+        //     break;
         case 'EXIT':
             process.exit();
             break;
@@ -70,16 +91,23 @@ const viewEmployees = async () => {
 
 };
 
-const viewDepartments = () => {
-    // queries go here
+const viewDepartments = async () => {
+    const [departmentData] = await db.query('SELECT * FROM department');
+    console.table(departmentData);
+    mainMenu();
 
 };
 
-const viewRoles = () => {
-
+const viewRoles = async () => {
+    const [roleData] = await db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON role.department_id = department.id');
+    console.table(roleData);
+    mainMenu();
 
 };
 
-
+const addDepartment = () => {
+    const newDepartment = `INSERT INTO department (name)
+                            VALUES (?)`;
+}
 
 mainMenu();
