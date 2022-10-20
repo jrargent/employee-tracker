@@ -20,7 +20,6 @@ const db = mysql.createConnection(
 function logoLoad() {
     const logoText = logo({ name: 'Employee Tracker' }).render();
     console.log(logoText);
-
     mainMenu();
 };
 
@@ -63,7 +62,6 @@ const mainMenu = async () => { // async await allows for asynchronous promises
                     name: 'Exit',
                     value: 'EXIT'
                 }
-                // more may be added
             ]
         }
     ])
@@ -78,9 +76,9 @@ const mainMenu = async () => { // async await allows for asynchronous promises
         case 'VIEW_ROLES':
             viewRoles();
             break;
-        // case 'ADD_EMPLOYEE':
-        //     addEmployee();
-        //     break;
+        case 'ADD_EMPLOYEE':
+            addEmployee();
+            break;
         case 'ADD_DEPARTMENT':
             addDepartment();
             break;
@@ -96,8 +94,6 @@ const mainMenu = async () => { // async await allows for asynchronous promises
         default:
             process.exit();
     }
-
-
 };
 
 const viewEmployees = async () => {
@@ -110,25 +106,21 @@ const viewEmployees = async () => {
          LEFT JOIN employee M ON E.manager_id = M.id`);
     console.table(employeeData);
     mainMenu();
-
 };
 
 const viewDepartments = async () => {
     const [departmentData] = await db.query('SELECT * FROM department');
     console.table(departmentData);
     mainMenu();
-
 };
 
 const viewRoles = async () => {
     const [roleData] = await db.query('SELECT role.id, role.title, department.name AS department, role.salary FROM role JOIN department ON role.department_id = department.id');
     console.table(roleData);
     mainMenu();
-
 };
 
 const addDepartment = () => {
-
     inquirer.prompt([
         {
             type: 'input',
@@ -148,13 +140,10 @@ const addDepartment = () => {
         VALUES ('${data.name}')`);
         viewDepartments();
     });
-
-
 };
 
 const addRole = async () => {
     const [listDepartments] = await db.query('SELECT * FROM department');
-    //console.log(listDepartments);
     let departments = [];
     let getDepartment = new Promise((resolve, reject) => {
         for (let dept of listDepartments) {
@@ -171,8 +160,6 @@ const addRole = async () => {
     });
 
     getDepartment.then((departments) => {
-        //console.log(departments);
-
         inquirer.prompt([
             {
                 type: 'input',
@@ -210,17 +197,97 @@ const addRole = async () => {
             db.query(`INSERT INTO role (title, salary, department_id)
             VALUES ('${data.title}', ${data.salary}, ${data.choice.id})`)
 
-            viewRoles();
+            mainMenu();
         })
     })
 };
 
-const addEmployee = () => {
-    // prompt here for 'What is the employee's first name?'
-    // 'What is the employee's last name?' 
-    // and 'What is the employee's role?' (use choice prompt here)
-    // 'Who is the employee's manager? (use choice prompt here and list none, other employees)
+const addEmployee = async () => {
+
+    const [listManagers] = await db.query('SELECT * FROM employee');
+    let managers = [];
+    let getManager = new Promise((resolve, reject) => {
+        for (let manager of listManagers) {
+            var managerData = {
+                name: manager.name,
+                value: {
+                    name: manager.name,
+                    id: manager.id
+                }
+            }
+            managers.push(managerData);
+            resolve(managers);
+        }
+    });
+
+    const [listRoles] = await db.query('SELECT * FROM role');
+    let roles = [];
+    let getRole = new Promise((resolve, reject) => {
+        for (let role of listRoles) {
+            var roleData = {
+                name: role.title,
+                value: {
+                    name: role.title,
+                    id: role.id
+                }
+            }
+            roles.push(roleData);
+            resolve(roles);
+        }
+    });
+
+
+    getRole.then((roles) => {
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'first_name',
+                message: "What is the employee's first name?",
+                validate: nameInput => {
+                    if (nameInput) {
+                        return true;
+                    } else {
+                        console.log('Please enter an employee name.');
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'input',
+                name: 'last_name',
+                message: "What is the employee's last name?",
+                validate: nameInput => {
+                    if (nameInput) {
+                        return true;
+                    } else {
+                        console.log('Please enter an employee name.');
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'list',
+                name: 'choice',
+                message: "What is the employee's role?",
+                choices: roles
+            },
+            // {
+            //     type: 'list',
+            //     name: 'choice',
+            //     message: "Who is the employee's manager?",
+            //     choices: 
+
+            // }
+        ]).then(data => {
+            console.log(data);
+            db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                     VALUES ('${data.first_name}', "${data.last_name}", ${data.choice.id}, NULL)`)
+            mainMenu();
+        })
+    })
 };
+
+
 
 const updateRole = () => {
     // prompt here for 'Which employee's role do you want to update?? (use choice prompt here and list employees)
