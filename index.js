@@ -85,9 +85,9 @@ const mainMenu = async () => { // async await allows for asynchronous promises
         case 'ADD_ROLE':
             addRole();
             break;
-        // case 'UPDATE_ROLE':
-        //     updateRole();
-        //     break;
+        case 'UPDATE_ROLE':
+            updateRole();
+            break;
         case 'EXIT':
             process.exit();
             break;
@@ -289,7 +289,37 @@ const addEmployee = async () => {
 
 
 
-const updateRole = () => {
+const updateRole = async () => {
+    const [listEmployees] = await db.query('SELECT * FROM employee');
+    let employees = [];
+    let getEmployee = new Promise((resolve, reject) => {
+        for (let emp of listEmployees) {
+            var employeeData = {
+                name: emp.first_name + " " + emp.last_name,
+                value: {
+                    name: emp.first_name + " " + emp.last_name,
+                    id: emp.id
+                }
+            }
+            employees.push(employeeData);
+            resolve(employees);
+        }
+    });
+
+    getEmployee.then((employees) => {
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'choice',
+                message: "Which employee's role do you want to update?",
+                choices: employees
+            },
+        ]).then((data) => {
+            console.log(data);
+        })
+    })
+
+
     // prompt here for 'Which employee's role do you want to update?? (use choice prompt here and list employees)
     // 'Which role do you want to assign the selected employee?' 
 
