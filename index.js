@@ -133,7 +133,15 @@ const addDepartment = () => {
         {
             type: 'input',
             name: 'name',
-            message: 'What is the name of the department?'
+            message: 'What is the name of the department?',
+            validate: nameInput => {
+                if (nameInput) {
+                    return true;
+                } else {
+                    console.log('Please enter a department name.');
+                    return false;
+                }
+            }
         }
     ]).then(data => {
         db.query(`INSERT INTO department (name)
@@ -163,33 +171,48 @@ const addRole = async () => {
     });
 
     getDepartment.then((departments) => {
-        console.log(departments);
+        //console.log(departments);
+
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'title',
+                message: 'What is the name of the role?',
+                validate: titleInput => {
+                    if (titleInput) {
+                        return true;
+                    } else {
+                        console.log('Please enter a role name.');
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: 'What is the salary of the role?',
+                validate: salaryInput => {
+                    if (salaryInput) {
+                        return true;
+                    } else {
+                        console.log('Please enter a number.');
+                        return false;
+                    }
+                }
+            },
+            {
+                type: 'list',
+                name: 'choice',
+                message: 'Which department does this role belong to?',
+                choices: departments
+            }
+        ]).then(data => {
+            db.query(`INSERT INTO role (title, salary, department_id)
+            VALUES ('${data.title}', ${data.salary}, ${data.choice.id})`)
+
+            viewRoles();
+        })
     })
-
-
-    // inquirer.prompt([
-    //     {
-    //         type: 'input',
-    //         name: 'name',
-    //         message: 'What is the name of the role?'
-    //     },
-    //     {
-    //         type: 'number',
-    //         name: 'salary',
-    //         message: 'What is the salary of the role?'
-    //     },
-    //     {
-    //         type: 'list',
-    //         name: 'choice',
-    //         message: 'Which department does this role belong to?',
-    //         choices: 
-
-
-    // ]).then(
-    // // INSERT INTO role (title, salary, department_id)
-    // // VALUES ('${data.title}', ${data.salary}, ${data.id}),
-    // )
-
 };
 
 const addEmployee = () => {
